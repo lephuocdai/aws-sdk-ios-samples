@@ -27,6 +27,7 @@
 		F0C77BCA18499C61003B60FA /* AWSRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC818499C61003B60FA /* AWSRuntime.framework */; };
 		F0C77BCB18499C61003B60FA /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC918499C61003B60FA /* AWSS3.framework */; };
 		F0C77BCE1849BA40003B60FA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */; };
+		F0C77BD01849CF78003B60FA /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BCF1849CF78003B60FA /* MobileCoreServices.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,7 @@
 		F0C77BC918499C61003B60FA /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
 		F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Question7-opinionAboutEducation_inEnglish.mp4"; sourceTree = "<group>"; };
 		F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
+		F0C77BCF1849CF78003B60FA /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +67,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0C77BD01849CF78003B60FA /* MobileCoreServices.framework in Frameworks */,
 				F0C77BCE1849BA40003B60FA /* AssetsLibrary.framework in Frameworks */,
 				4AD20C0B17AC22E80073DC55 /* UIKit.framework in Frameworks */,
 				4AD20C0D17AC22E80073DC55 /* Foundation.framework in Frameworks */,
@@ -97,6 +100,7 @@
 		4AD20C0917AC22E80073DC55 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0C77BCF1849CF78003B60FA /* MobileCoreServices.framework */,
 				F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */,
 				F0C77BC818499C61003B60FA /* AWSRuntime.framework */,
 				F0C77BC918499C61003B60FA /* AWSS3.framework */,

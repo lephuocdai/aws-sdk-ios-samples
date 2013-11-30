@@ -30,27 +30,12 @@
 
 // Upload filename
 
-NSString *smallFilename;
+NSString *uploadFilename;
+bool isVideo;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSMutableArray *assets = [[NSMutableArray alloc] init];
-    
-    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-    [library enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop){
-        if (group != NULL) {
-            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop){
-                if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
-                    NSLog(@"asset: %@", result.defaultRepresentation.url);
-                    [assets addObject:result];
-                }
-            }];
-        }
-    }
-        failureBlock:^(NSError *error){
-            NSLog(@"failure");
-    }];
     
     if(self.tm == nil){
         if(![ACCESS_KEY_ID isEqualToString:@"CHANGE ME"]){
@@ -83,13 +68,6 @@ NSString *smallFilename;
 //            self.pathForSmallFile = [self generateTempFile: @"small_test_data.txt": kSmallFileSize];
 //            self.pathForBigFile = [self generateTempFile: @"big_test_data.txt" : kBigFileSize];
             
-//            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-//            NSString *documentsDirectory = [paths objectAtIndex:0];
-//            NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"Question6-Engineer Recent Web Service.mp4"];
-//            NSLog(filePath);
-//            self.pathForSmallFile = @"assets-library://asset/asset.MOV?id=4989491B-554D-4A3B-B0BE-FADDAFCBF7AC&ext=MOV";
-            //filePath;
-            self.pathForBigFile = [self generateTempFile: @"big_test_data.txt" : kBigFileSize];
         }else {
             UIAlertView *message = [[UIAlertView alloc] initWithTitle:CREDENTIALS_ERROR_TITLE
                                                               message:CREDENTIALS_ERROR_MESSAGE
@@ -104,58 +82,92 @@ NSString *smallFilename;
 #pragma mark - Transfer Manager actions
 
 - (IBAction)uploadSmallFile:(id)sender {
-    
+    isVideo = false;
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
     picker.allowsEditing = YES;
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     
     [self presentViewController:picker animated:YES completion:NULL];
-    
+}
+
+- (IBAction)uploadBigFile:(id)sender {
+    isVideo = true;
+    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+    picker.delegate = self;
+    picker.allowsEditing = YES;
+    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    picker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
+
+    [self presentViewController:picker animated:YES completion:NULL];
 }
 
 #pragma mark - Image Picker Controller delegate methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    
-    UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
-    NSData* imageData = UIImagePNGRepresentation(chosenImage);
-//    self.imageView.image = chosenImage;
-//    UIImage* image = [UIImage imageWithCGImage:imageRef];
-    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-    NSString *cachesDirectory = [paths objectAtIndex:0];
-    
-    NSString* filePath = [NSString stringWithFormat:@"%@/imageTemp.png",cachesDirectory];
-    [imageData writeToFile:filePath atomically:YES];
-    self.pathForSmallFile = filePath;
-    
-    // Format date to string
-    NSDate *date = [NSDate date];
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss zzz"];
-    NSString *stringFromDate = [dateFormat stringFromDate:date];
-    
-    
-    smallFilename = [NSString stringWithFormat:@"%@.jpg", stringFromDate];
-    
-    
-    [picker dismissViewControllerAnimated:YES completion:NULL];
-    
-    if(self.uploadSmallFileOperation == nil || (self.uploadSmallFileOperation.isFinished && !self.uploadSmallFileOperation.isPaused)){
-        self.uploadSmallFileOperation = [self.tm uploadFile:self.pathForSmallFile bucket: [Constants transferManagerBucket] key: smallFilename];
+    if (!isVideo) {
+        UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+        NSData* imageData = UIImagePNGRepresentation(chosenImage);
+
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        NSString *cachesDirectory = [paths objectAtIndex:0];
+        
+        NSString* filePath = [NSString stringWithFormat:@"%@/imageTemp.png",cachesDirectory];
+        [imageData writeToFile:filePath atomically:YES];
+        self.pathForSmallFile = filePath;
+        
+        // Format date to string
+        NSDate *date = [NSDate date];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+        NSString *stringFromDate = [dateFormat stringFromDate:date];
+        
+        uploadFilename = [NSString stringWithFormat:@"%@.jpg", stringFromDate];
+        
+        [picker dismissViewControllerAnimated:YES completion:NULL];
+        
+        if(self.uploadSmallFileOperation == nil || (self.uploadSmallFileOperation.isFinished && !self.uploadSmallFileOperation.isPaused)){
+            self.uploadSmallFileOperation = [self.tm uploadFile:self.pathForSmallFile bucket: [Constants transferManagerBucket] key: uploadFilename];
+        }
+    } else {
+        NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
+        if ([mediaType isEqualToString:(NSString *)kUTTypeMovie]) {
+            NSURL *urlVideo = [info objectForKey:UIImagePickerControllerMediaURL];
+            
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+            NSString *cachesDirectory = [paths objectAtIndex:0];
+            
+            NSString* filePath = [NSString stringWithFormat:@"%@/imageTemp.mov",cachesDirectory];
+            NSData *videoData = [NSData dataWithContentsOfURL:urlVideo];
+            [videoData writeToFile:filePath atomically:YES];
+            self.pathForBigFile = filePath;
+
+            
+            //self.pathForBigFile = [urlVideo absoluteString];
+            NSLog(self.pathForBigFile);
+            
+            // Format date to string
+            NSDate *date = [NSDate date];
+            NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+            [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+            NSString *stringFromDate = [dateFormat stringFromDate:date];
+            
+            uploadFilename = [NSString stringWithFormat:@"%@.mov", stringFromDate];
+            [picker dismissViewControllerAnimated:YES completion:NULL];
+            
+            if(self.uploadBigFileOperation == nil || (self.uploadBigFileOperation.isFinished && !self.uploadBigFileOperation.isPaused)){
+                self.uploadBigFileOperation = [self.tm uploadFile:self.pathForBigFile bucket: [Constants transferManagerBucket] key: uploadFilename];
+            }
+        }
     }
+    
+    
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
     
     [picker dismissViewControllerAnimated:YES completion:NULL];
     
-}
-
-- (IBAction)uploadBigFile:(id)sender {
-    if(self.uploadBigFileOperation == nil || (self.uploadBigFileOperation.isFinished && !self.uploadBigFileOperation.isPaused)){
-        self.uploadBigFileOperation = [self.tm uploadFile:self.pathForBigFile bucket: [Constants transferManagerBucket] key: kKeyForBigFile];
-    }
 }
 
 - (IBAction)pauseUploads:(id)sender {
@@ -170,7 +182,7 @@ NSString *smallFilename;
     for (S3TransferOperation *op in ops) {
         if ([op.putRequest.key isEqualToString:kKeyForBigFile]) {
             self.uploadBigFileOperation = op;
-        }else if ([op.putRequest.key isEqualToString:smallFilename]) {
+        }else if ([op.putRequest.key isEqualToString:uploadFilename]) {
             self.uploadSmallFileOperation = op;
         }
     }
@@ -205,7 +217,7 @@ NSString *smallFilename;
 
 -(void)request:(AmazonServiceRequest *)request didSendData:(long long) bytesWritten totalBytesWritten:(long long)totalBytesWritten totalBytesExpectedToWrite:(long long)totalBytesExpectedToWrite
 {
-    if([((S3PutObjectRequest *)request).key isEqualToString:smallFilename]){
+    if([((S3PutObjectRequest *)request).key isEqualToString:uploadFilename]){
         double percent = ((double)totalBytesWritten/(double)totalBytesExpectedToWrite)*100;
         self.putObjectTextField.text = [NSString stringWithFormat:@"%.2f%%", percent];
     }
@@ -217,7 +229,7 @@ NSString *smallFilename;
 
 -(void)request:(AmazonServiceRequest *)request didCompleteWithResponse:(AmazonServiceResponse *)response
 {
-    if([((S3PutObjectRequest *)request).key isEqualToString:smallFilename]){
+    if([((S3PutObjectRequest *)request).key isEqualToString:uploadFilename]){
         self.putObjectTextField.text = @"Done";
     }
     else if([((S3PutObjectRequest *)request).key isEqualToString:kKeyForBigFile]) {
