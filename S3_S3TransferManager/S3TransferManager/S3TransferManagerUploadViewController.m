@@ -31,6 +31,22 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    NSMutableArray *assets = [[NSMutableArray alloc] init];
+    
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+    [library enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop){
+        if (group != NULL) {
+            [group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop){
+                if ([[result valueForProperty:ALAssetPropertyType] isEqualToString:ALAssetTypeVideo]) {
+                    NSLog(@"asset: %@", result);
+                    [assets addObject:result];
+                }
+            }];
+        }
+    }
+        failureBlock:^(NSError *error){
+            NSLog(@"failure");
+    }];
     
     if(self.tm == nil){
         if(![ACCESS_KEY_ID isEqualToString:@"CHANGE ME"]){
@@ -55,12 +71,18 @@
                 }
             }@catch(AmazonServiceException *exception){
                 if(![@"BucketAlreadyOwnedByYou" isEqualToString: exception.errorCode]){
-                    NSLog(@"Unable to create bucket: %@", exception.error);
+                    NSLog(@"Unable to create bucket: %@ %@",exception.errorCode, exception.error);
                 }
             }
             
             // Set the paths for the small and big files
-            self.pathForSmallFile = [self generateTempFile: @"small_test_data.txt": kSmallFileSize];
+//            self.pathForSmallFile = [self generateTempFile: @"small_test_data.txt": kSmallFileSize];
+//            self.pathForBigFile = [self generateTempFile: @"big_test_data.txt" : kBigFileSize];
+            NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+            NSString *documentsDirectory = [paths objectAtIndex:0];
+            NSString *filePath = [documentsDirectory stringByAppendingPathComponent:@"Question6-Engineer Recent Web Service.mp4"];
+            NSLog(filePath);
+            self.pathForSmallFile = filePath;
             self.pathForBigFile = [self generateTempFile: @"big_test_data.txt" : kBigFileSize];
         }else {
             UIAlertView *message = [[UIAlertView alloc] initWithTitle:CREDENTIALS_ERROR_TITLE

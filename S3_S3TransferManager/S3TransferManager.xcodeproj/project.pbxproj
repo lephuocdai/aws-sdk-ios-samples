@@ -24,6 +24,9 @@
 		4AD20C3017AC22E80073DC55 /* second.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AD20C2F17AC22E80073DC55 /* second.png */; };
 		4AD20C3217AC22E80073DC55 /* second@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AD20C3117AC22E80073DC55 /* second@2x.png */; };
 		4AD20C3A17AC36F60073DC55 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AD20C3917AC36F60073DC55 /* Constants.m */; };
+		F0C77BCA18499C61003B60FA /* AWSRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC818499C61003B60FA /* AWSRuntime.framework */; };
+		F0C77BCB18499C61003B60FA /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC918499C61003B60FA /* AWSS3.framework */; };
+		F0C77BCE1849BA40003B60FA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +54,10 @@
 		4AD20C3117AC22E80073DC55 /* second@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "second@2x.png"; sourceTree = "<group>"; };
 		4AD20C3817AC36F60073DC55 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		4AD20C3917AC36F60073DC55 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		F0C77BC818499C61003B60FA /* AWSRuntime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSRuntime.framework; sourceTree = "<group>"; };
+		F0C77BC918499C61003B60FA /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
+		F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Question7-opinionAboutEducation_inEnglish.mp4"; sourceTree = "<group>"; };
+		F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,9 +65,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0C77BCE1849BA40003B60FA /* AssetsLibrary.framework in Frameworks */,
 				4AD20C0B17AC22E80073DC55 /* UIKit.framework in Frameworks */,
 				4AD20C0D17AC22E80073DC55 /* Foundation.framework in Frameworks */,
 				4AD20C0F17AC22E80073DC55 /* CoreGraphics.framework in Frameworks */,
+				F0C77BCA18499C61003B60FA /* AWSRuntime.framework in Frameworks */,
+				F0C77BCB18499C61003B60FA /* AWSS3.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -87,6 +97,9 @@
 		4AD20C0917AC22E80073DC55 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */,
+				F0C77BC818499C61003B60FA /* AWSRuntime.framework */,
+				F0C77BC918499C61003B60FA /* AWSS3.framework */,
 				4AD20C0A17AC22E80073DC55 /* UIKit.framework */,
 				4AD20C0C17AC22E80073DC55 /* Foundation.framework */,
 				4AD20C0E17AC22E80073DC55 /* CoreGraphics.framework */,
@@ -97,6 +110,7 @@
 		4AD20C1017AC22E80073DC55 /* S3TransferManager */ = {
 			isa = PBXGroup;
 			children = (
+				F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */,
 				4AD20C1917AC22E80073DC55 /* S3TransferManagerAppDelegate.h */,
 				4AD20C1A17AC22E80073DC55 /* S3TransferManagerAppDelegate.m */,
 				4AD20C2217AC22E80073DC55 /* MainStoryboard.storyboard */,
@@ -289,11 +303,14 @@
 		4AD20C3617AC22E80073DC55 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/lephuocdai/Documents/dev/aws-ios-sdk-1.7.0/aws-sdk-ios-samples/S3_S3TransferManager",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "S3TransferManager/S3TransferManager-Prefix.pch";
 				INFOPLIST_FILE = "S3TransferManager/S3TransferManager-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
@@ -303,11 +320,14 @@
 		4AD20C3717AC22E80073DC55 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"/Users/lephuocdai/Documents/dev/aws-ios-sdk-1.7.0/aws-sdk-ios-samples/S3_S3TransferManager",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "S3TransferManager/S3TransferManager-Prefix.pch";
 				INFOPLIST_FILE = "S3TransferManager/S3TransferManager-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;

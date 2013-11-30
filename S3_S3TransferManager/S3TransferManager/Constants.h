@@ -23,8 +23,8 @@
 // to devices securely.
 // http://aws.amazon.com/articles/Mobile/4611615499399490
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#define ACCESS_KEY_ID          @"CHANGE ME"
-#define SECRET_KEY             @"CHANGE ME"
+#define ACCESS_KEY_ID          @"AKIAJZSQLOXCEEVDOEPA"
+#define SECRET_KEY             @"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"
 
 
 // Constants for the Bucket
@@ -37,7 +37,7 @@
 #define kRequestTagForSmallFile         @"tag-tm-small-file-0"
 #define kRequestTagForBigFile           @"tag-tm-big-file-0"
 #define kKeyForBigFile                  @"tm-large-file-0"
-#define kKeyForSmallFile                @"tm-small-file-0"
+#define kKeyForSmallFile                @"Question6-Engineer Recent Web Service.mp4"
 
 #define kSmallFileSize 1024*1024*4.8 //4.8 megs
 #define kBigFileSize 1024*1024*10  //10 megs

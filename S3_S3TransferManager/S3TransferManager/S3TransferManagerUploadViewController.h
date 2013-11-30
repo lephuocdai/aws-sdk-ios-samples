@@ -17,6 +17,7 @@
 
 #import <AWSRuntime/AWSRuntime.h>
 #import <AWSS3/AWSS3.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
 @interface S3TransferManagerUploadViewController : UIViewController <UINavigationControllerDelegate, AmazonServiceRequestDelegate>
 
