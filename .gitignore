@@ -55,4 +55,3 @@ DerivedData
 # AWS access #
 ####################
 S3_S3TransferManager/S3TransferManager/Constants.h
-
