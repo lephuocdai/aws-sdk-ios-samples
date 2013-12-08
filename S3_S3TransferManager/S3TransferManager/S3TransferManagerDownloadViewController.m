@@ -25,95 +25,74 @@
 
 @end
 
-@implementation S3TransferManagerDownloadViewController
+@implementation S3TransferManagerDownloadViewController{
+    NSMutableArray *fileList;
+    AmazonS3Client *s3Client;
+}
 
 - (void)viewDidLoad
 {
-    
     [super viewDidLoad];
-	
-    if(self.tm == nil){
-        if(![ACCESS_KEY_ID isEqualToString:@"CHANGE ME"]
-           )
-        {
-            // Initialize the S3 Client.
-            AmazonS3Client *s3 = [[AmazonS3Client alloc] initWithAccessKey:ACCESS_KEY_ID
-                                                             withSecretKey:SECRET_KEY];
-            s3.endpoint = [AmazonEndpoints s3Endpoint:US_WEST_2];
-            
-            // Initialize the TransferManager
-            self.tm = [S3TransferManager new];
-            self.tm.s3 = s3;
-            self.tm.delegate = self;
-            
-        }else {
-            UIAlertView *message = [[UIAlertView alloc] initWithTitle:CREDENTIALS_ERROR_TITLE
-                                                              message:CREDENTIALS_ERROR_MESSAGE
-                                                             delegate:nil
-                                                    cancelButtonTitle:@"OK"
-                                                    otherButtonTitles:nil];
-            [message show];
-        }
-    }
+    
+    fileList = [[NSMutableArray alloc] init];
+    
+    // List files from S3 Bucket: specify bucket name
+    [self s3DirectoryListing:@"s3-transfer-manager-bucket-akiajzsqloxceevdoepa"];
 }
 
-#pragma mark - Transfer Manager Actions
-
-- (IBAction)downloadFile:(id)sender {
-    if(self.downloadFileOperation == nil || (self.downloadFileOperation.isFinished && !self.downloadFileOperation.isPaused)){
-        self.filePath = [NSTemporaryDirectory() stringByAppendingPathComponent:@"download-tm-small-file.txt"];
-        [[NSFileManager defaultManager] removeItemAtPath:self.filePath error: nil];
-        self.totalBytesWritten = 0;
-        self.downloadFileOperation = [self.tm downloadFile:self.filePath bucket:[Constants transferManagerBucket] key:kKeyForSmallFile];
-    }
-}
-
-- (IBAction)pauseDownload:(id)sender {
-    [self.tm pauseAllTransfers];
-}
-
-- (IBAction)resumeDownload:(id)sender {
-    // When you resume, the original handle to the S3TransferOperation
-    // is no longer valid.  Update with the new handle.
-    self.downloadFileOperation = [self.tm resume:self.downloadFileOperation requestDelegate:self];
-}
-
-- (IBAction)cancelDownload:(id)sender {
-    [self.downloadFileOperation cancel];
-    self.getObjectTextField.text = @"";
-}
 
 #pragma mark - AmazonServiceRequestDelegate
 
--(void)request:(AmazonServiceRequest *)request didReceiveResponse:(NSURLResponse *)response
-{
-    NSDictionary * headers = ((NSHTTPURLResponse *)response).allHeaderFields;
-    //if content-range is not set (this is not a range download), content-length is the length of the file
-    if ([headers objectForKey:(@"Content-Range")] == nil) {
-        self.expectedTotalBytes = [[headers objectForKey:(@"Content-Length")] longLongValue];
-    }
+-(void)request:(AmazonServiceRequest *)request didReceiveResponse:(NSURLResponse *)response {
 }
 
-- (void)request:(AmazonServiceRequest *)request didReceiveData:(NSData *)data
-{
-    self.totalBytesWritten += data.length;
-    double percent = ((double)self.totalBytesWritten/(double)self.expectedTotalBytes)*100;
-    self.getObjectTextField.text = [NSString stringWithFormat:@"%.2f%%", percent];
+- (void)request:(AmazonServiceRequest *)request didReceiveData:(NSData *)data {
 }
 
--(void)request:(AmazonServiceRequest *)request didCompleteWithResponse:(AmazonServiceResponse *)response
-{
-    self.getObjectTextField.text = @"Done";
+-(void)request:(AmazonServiceRequest *)request didCompleteWithResponse:(AmazonServiceResponse *)response {
 }
 
--(void)request:(AmazonServiceRequest *)request didFailWithError:(NSError *)error
-{
+-(void)request:(AmazonServiceRequest *)request didFailWithError:(NSError *)error {
     NSLog(@"didFailWithError called: %@", error);
 }
 
--(void)request:(AmazonServiceRequest *)request didFailWithServiceException:(NSException *)exception
-{
+-(void)request:(AmazonServiceRequest *)request didFailWithServiceException:(NSException *)exception {
     NSLog(@"didFailWithServiceException called: %@", exception);
 }
 
+-(void) s3DirectoryListing: (NSString *) bucketName {
+    
+    // Init connection with S3Client
+    s3Client = [[AmazonS3Client alloc] initWithAccessKey:ACCESS_KEY_ID withSecretKey:SECRET_KEY];
+    
+    @try {
+        // Get file list
+        S3ListObjectsRequest *req = [[S3ListObjectsRequest alloc] initWithName:bucketName];
+        S3ListObjectsResponse *res = [s3Client listObjects:req];
+        NSMutableArray* objectSummaries = res.listObjectsResult.objectSummaries;
+        
+        // Add each filename to fileList
+        for (int x = 0; x < [objectSummaries count]; x++) {
+            [fileList addObject:[objectSummaries objectAtIndex:x]];
+            NSLog(@"%@", [fileList lastObject]);
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"Cannot list S3 %@",exception);
+    }
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return [fileList count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    static NSString *fileListIdentifier = @"fileListIdentifier";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:fileListIdentifier];
+    if (cell == nil) {
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:fileListIdentifier];
+    }
+    cell.textLabel.text = [NSString stringWithFormat:@"%@",[fileList objectAtIndex:indexPath.row]];
+    return cell;
+}
 @end

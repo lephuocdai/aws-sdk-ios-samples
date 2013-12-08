@@ -17,15 +17,17 @@
 
 #import <AWSRuntime/AWSRuntime.h>
 #import <AWSS3/AWSS3.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 
-@interface S3TransferManagerDownloadViewController : UIViewController <UINavigationControllerDelegate, AmazonServiceRequestDelegate>
+@interface S3TransferManagerDownloadViewController : UIViewController <UINavigationControllerDelegate, AmazonServiceRequestDelegate, UITableViewDelegate, UITableViewDataSource>
 
-@property (nonatomic, strong) S3TransferManager *tm;
-@property (weak, nonatomic) IBOutlet UITextField *getObjectTextField;
+//@property (nonatomic, strong) S3TransferManager *tm;
+//@property (weak, nonatomic) IBOutlet UITextField *getObjectTextField;
+//@property (strong, nonatomic) IBOutlet UILabel *fileName;
 
-- (IBAction)downloadFile:(id)sender;
-- (IBAction)pauseDownload:(id)sender;
-- (IBAction)resumeDownload:(id)sender;
-- (IBAction)cancelDownload:(id)sender;
+//- (IBAction)downloadFile:(id)sender;
+//- (IBAction)pauseDownload:(id)sender;
+//- (IBAction)resumeDownload:(id)sender;
+//- (IBAction)cancelDownload:(id)sender;
 
 @end
