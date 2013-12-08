@@ -61,10 +61,8 @@
 }
 
 -(void) s3DirectoryListing: (NSString *) bucketName {
-    
     // Init connection with S3Client
     s3Client = [[AmazonS3Client alloc] initWithAccessKey:ACCESS_KEY_ID withSecretKey:SECRET_KEY];
-    
     @try {
         // Get file list
         S3ListObjectsRequest *req = [[S3ListObjectsRequest alloc] initWithName:bucketName];
@@ -73,7 +71,6 @@
         
         // Add each filename to fileList
         for (int x = 0; x < [objectSummaries count]; x++) {
-            
             
             // Set the content type so that the browser will treat the URL as an image.
             S3ResponseHeaderOverrides *override = [[S3ResponseHeaderOverrides alloc] init];
@@ -91,7 +88,7 @@
             NSURL *url = [s3Client getPreSignedURL:gpsur error:&error];
             NSLog(@"file url: %@", url);
             
-            
+            // Add new file to fileList
             NSMutableDictionary *file = [NSMutableDictionary dictionary];
             file[@"fileName"] = [NSString stringWithFormat:@"%@",[objectSummaries objectAtIndex:x]];
             file[@"fileURL"] = url;
@@ -126,6 +123,7 @@
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         FileViewController *destViewController = segue.destinationViewController;
         destViewController.fileName = [fileList objectAtIndex:indexPath.row][@"fileName"];
+        destViewController.movieURL = [fileList objectAtIndex:indexPath.row][@"fileURL"];
     }
 }
 
