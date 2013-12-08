@@ -18,8 +18,10 @@
 #import <AWSRuntime/AWSRuntime.h>
 #import <AWSS3/AWSS3.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import "FileViewController.h"
 
 @interface S3TransferManagerDownloadViewController : UIViewController <UINavigationControllerDelegate, AmazonServiceRequestDelegate, UITableViewDelegate, UITableViewDataSource>
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
 
 //@property (nonatomic, strong) S3TransferManager *tm;
 //@property (weak, nonatomic) IBOutlet UITextField *getObjectTextField;

@@ -159,7 +159,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                         <connections>
-                                            <segue destination="LOO-hJ-LTf" kind="push" id="s2r-WM-pOS"/>
+                                            <segue destination="LOO-hJ-LTf" kind="push" identifier="showFileDetail" id="s2r-WM-pOS"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -172,28 +172,40 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="File List" id="hlS-O1-czf"/>
+                    <connections>
+                        <outlet property="tableView" destination="v1e-Af-QOz" id="Rv3-8w-Hcn"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="12" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1179" y="560"/>
         </scene>
-        <!--View Controller - Detail View-->
+        <!--File View Controller - Detail View-->
         <scene sceneID="mHT-9I-H1M">
             <objects>
-                <viewController id="LOO-hJ-LTf" sceneMemberID="viewController">
+                <viewController id="LOO-hJ-LTf" customClass="FileViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="RHo-Eo-n8P">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <webView contentMode="scaleToFill" id="dJe-9e-TRQ">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                                <rect key="frame" x="0.0" y="103" width="320" height="415"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             </webView>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="file Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Kfn-eU-Mcn">
+                                <rect key="frame" x="20" y="74" width="280" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="Detail View" id="6l2-7W-bhT"/>
+                    <connections>
+                        <outlet property="fileLabel" destination="Kfn-eU-Mcn" id="Stb-dB-aEo"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="LcJ-lX-Am9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

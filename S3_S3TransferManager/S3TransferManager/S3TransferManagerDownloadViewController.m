@@ -73,7 +73,7 @@
         
         // Add each filename to fileList
         for (int x = 0; x < [objectSummaries count]; x++) {
-            [fileList addObject:[objectSummaries objectAtIndex:x]];
+            [fileList addObject:[NSString stringWithFormat:@"%@",[objectSummaries objectAtIndex:x]]];
             NSLog(@"%@", [fileList lastObject]);
         }
     }
@@ -96,7 +96,16 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:fileListIdentifier];
     }
-    cell.textLabel.text = [NSString stringWithFormat:@"%@",[fileList objectAtIndex:indexPath.row]];
+    cell.textLabel.text = [fileList objectAtIndex:indexPath.row];
     return cell;
 }
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"showFileDetail"]) {
+        NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+        FileViewController *destViewController = segue.destinationViewController;
+        destViewController.fileName = [fileList objectAtIndex:indexPath.row];
+    }
+}
+
 @end

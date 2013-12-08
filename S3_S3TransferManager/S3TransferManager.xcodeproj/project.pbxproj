@@ -24,6 +24,7 @@
 		4AD20C3017AC22E80073DC55 /* second.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AD20C2F17AC22E80073DC55 /* second.png */; };
 		4AD20C3217AC22E80073DC55 /* second@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 4AD20C3117AC22E80073DC55 /* second@2x.png */; };
 		4AD20C3A17AC36F60073DC55 /* Constants.m in Sources */ = {isa = PBXBuildFile; fileRef = 4AD20C3917AC36F60073DC55 /* Constants.m */; };
+		F0718AB3185429CA009014A0 /* FileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0718AB2185429CA009014A0 /* FileViewController.m */; };
 		F0C77BCA18499C61003B60FA /* AWSRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC818499C61003B60FA /* AWSRuntime.framework */; };
 		F0C77BCB18499C61003B60FA /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC918499C61003B60FA /* AWSS3.framework */; };
 		F0C77BCE1849BA40003B60FA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */; };
@@ -55,6 +56,8 @@
 		4AD20C3117AC22E80073DC55 /* second@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "second@2x.png"; sourceTree = "<group>"; };
 		4AD20C3817AC36F60073DC55 /* Constants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Constants.h; sourceTree = "<group>"; };
 		4AD20C3917AC36F60073DC55 /* Constants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Constants.m; sourceTree = "<group>"; };
+		F0718AB1185429CA009014A0 /* FileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileViewController.h; sourceTree = "<group>"; };
+		F0718AB2185429CA009014A0 /* FileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileViewController.m; sourceTree = "<group>"; };
 		F0C77BC818499C61003B60FA /* AWSRuntime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSRuntime.framework; sourceTree = "<group>"; };
 		F0C77BC918499C61003B60FA /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
 		F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Question7-opinionAboutEducation_inEnglish.mp4"; sourceTree = "<group>"; };
@@ -114,18 +117,11 @@
 		4AD20C1017AC22E80073DC55 /* S3TransferManager */ = {
 			isa = PBXGroup;
 			children = (
-				F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */,
 				4AD20C1917AC22E80073DC55 /* S3TransferManagerAppDelegate.h */,
 				4AD20C1A17AC22E80073DC55 /* S3TransferManagerAppDelegate.m */,
 				4AD20C2217AC22E80073DC55 /* MainStoryboard.storyboard */,
-				4AD20C2517AC22E80073DC55 /* S3TransferManagerUploadViewController.h */,
-				4AD20C2617AC22E80073DC55 /* S3TransferManagerUploadViewController.m */,
-				4AD20C2817AC22E80073DC55 /* first.png */,
-				4AD20C2A17AC22E80073DC55 /* first@2x.png */,
-				4AD20C2C17AC22E80073DC55 /* S3TransferManagerDownloadViewController.h */,
-				4AD20C2D17AC22E80073DC55 /* S3TransferManagerDownloadViewController.m */,
-				4AD20C2F17AC22E80073DC55 /* second.png */,
-				4AD20C3117AC22E80073DC55 /* second@2x.png */,
+				F0718AB518542AAF009014A0 /* Upload */,
+				F0718AB418542A86009014A0 /* Download */,
 				4AD20C1117AC22E80073DC55 /* Supporting Files */,
 				4AD20C3817AC36F60073DC55 /* Constants.h */,
 				4AD20C3917AC36F60073DC55 /* Constants.m */,
@@ -145,6 +141,31 @@
 				4AD20C2017AC22E80073DC55 /* Default-568h@2x.png */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		F0718AB418542A86009014A0 /* Download */ = {
+			isa = PBXGroup;
+			children = (
+				4AD20C2F17AC22E80073DC55 /* second.png */,
+				4AD20C3117AC22E80073DC55 /* second@2x.png */,
+				4AD20C2C17AC22E80073DC55 /* S3TransferManagerDownloadViewController.h */,
+				4AD20C2D17AC22E80073DC55 /* S3TransferManagerDownloadViewController.m */,
+				F0718AB1185429CA009014A0 /* FileViewController.h */,
+				F0718AB2185429CA009014A0 /* FileViewController.m */,
+			);
+			name = Download;
+			sourceTree = "<group>";
+		};
+		F0718AB518542AAF009014A0 /* Upload */ = {
+			isa = PBXGroup;
+			children = (
+				F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */,
+				4AD20C2517AC22E80073DC55 /* S3TransferManagerUploadViewController.h */,
+				4AD20C2617AC22E80073DC55 /* S3TransferManagerUploadViewController.m */,
+				4AD20C2817AC22E80073DC55 /* first.png */,
+				4AD20C2A17AC22E80073DC55 /* first@2x.png */,
+			);
+			name = Upload;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -218,6 +239,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F0718AB3185429CA009014A0 /* FileViewController.m in Sources */,
 				4AD20C1717AC22E80073DC55 /* main.m in Sources */,
 				4AD20C1B17AC22E80073DC55 /* S3TransferManagerAppDelegate.m in Sources */,
 				4AD20C2717AC22E80073DC55 /* S3TransferManagerUploadViewController.m in Sources */,
