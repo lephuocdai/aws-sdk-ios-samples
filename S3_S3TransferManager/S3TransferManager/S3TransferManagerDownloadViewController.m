@@ -73,8 +73,29 @@
         
         // Add each filename to fileList
         for (int x = 0; x < [objectSummaries count]; x++) {
-            [fileList addObject:[NSString stringWithFormat:@"%@",[objectSummaries objectAtIndex:x]]];
-            NSLog(@"%@", [fileList lastObject]);
+            
+            
+            // Set the content type so that the browser will treat the URL as an image.
+            S3ResponseHeaderOverrides *override = [[S3ResponseHeaderOverrides alloc] init];
+            override.contentType = @" ";
+            
+            // Request a pre-signed URL to picture that has been uplaoded.
+            S3GetPreSignedURLRequest *gpsur = [[S3GetPreSignedURLRequest alloc] init];
+            gpsur.key     = [NSString stringWithFormat:@"%@",[objectSummaries objectAtIndex:x]];
+            gpsur.bucket  = bucketName;
+            gpsur.expires = [NSDate dateWithTimeIntervalSinceNow:(NSTimeInterval) 3600]; // Added an hour's worth of seconds to the current time.
+            gpsur.responseHeaderOverrides = override;
+            
+            // Get the URL
+            NSError *error;
+            NSURL *url = [s3Client getPreSignedURL:gpsur error:&error];
+            NSLog(@"file url: %@", url);
+            
+            
+            NSMutableDictionary *file = [NSMutableDictionary dictionary];
+            file[@"fileName"] = [NSString stringWithFormat:@"%@",[objectSummaries objectAtIndex:x]];
+            file[@"fileURL"] = url;
+            [fileList addObject:file];
         }
     }
     @catch (NSException *exception) {
@@ -96,7 +117,7 @@
     if (cell == nil) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:fileListIdentifier];
     }
-    cell.textLabel.text = [fileList objectAtIndex:indexPath.row];
+    cell.textLabel.text = [fileList objectAtIndex:indexPath.row][@"fileName"];
     return cell;
 }
 
@@ -104,7 +125,7 @@
     if ([segue.identifier isEqualToString:@"showFileDetail"]) {
         NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
         FileViewController *destViewController = segue.destinationViewController;
-        destViewController.fileName = [fileList objectAtIndex:indexPath.row];
+        destViewController.fileName = [fileList objectAtIndex:indexPath.row][@"fileName"];
     }
 }
 
