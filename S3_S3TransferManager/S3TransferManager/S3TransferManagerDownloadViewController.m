@@ -33,13 +33,14 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    fileList = [[NSMutableArray alloc] init];
-    
-    // List files from S3 Bucket: specify bucket name
-    [self s3DirectoryListing:@"s3-transfer-manager-bucket-akiajzsqloxceevdoepa"];
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    fileList = [[NSMutableArray alloc] init];
+    // List files from S3 Bucket: specify bucket name
+    [self s3DirectoryListing:[Constants transferManagerBucket]];
+    [self.tableView reloadData];
+}
 
 #pragma mark - AmazonServiceRequestDelegate
 

@@ -50,12 +50,19 @@
     // Using the Movie Player Notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(moviePlayBackDidFinish:) name:MPMoviePlayerPlaybackDidFinishNotification object:self.movieController];
     
+    
+    self.movieController.controlStyle =  MPMovieControlStyleEmbedded;
+    self.movieController.shouldAutoplay = YES;
+    self.movieController.repeatMode = NO;
+    [self.movieController prepareToPlay];
+    
     [self.movieController play];
 }
 
 - (void)moviePlayBackDidFinish:(NSNotification *)notification {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:MPMoviePlayerPlaybackDidFinishNotification object:nil];
-    
+}
+- (void) viewWillDisappear:(BOOL)animated {
     [self.movieController stop];
     [self.movieController.view removeFromSuperview];
     self.movieController = nil;

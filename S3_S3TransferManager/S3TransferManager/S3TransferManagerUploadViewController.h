@@ -18,9 +18,10 @@
 #import <AWSRuntime/AWSRuntime.h>
 #import <AWSS3/AWSS3.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <MediaPlayer/MediaPlayer.h>
 #import <MobileCoreServices/UTCoreTypes.h>
 
-@interface S3TransferManagerUploadViewController : UIViewController <UINavigationControllerDelegate, AmazonServiceRequestDelegate>
+@interface S3TransferManagerUploadViewController : UIViewController <UINavigationControllerDelegate, UIAlertViewDelegate, AmazonServiceRequestDelegate>
 
 @property (nonatomic, strong) S3TransferManager *tm;
 
@@ -32,6 +33,10 @@
 - (IBAction)cancelBigUpload:(id)sender;
 - (IBAction)cancelAllTransfers:(id)sender;
 - (NSString *)generateTempFile: (NSString *)filename : (long long)approximateFileSize;
+
+- (IBAction)record:(id)sender;
+- (BOOL)startCameraControllerFromViewController:(UIViewController *)controller usingDelegate:(id)delegate;
+- (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
 
 @property (weak, nonatomic) IBOutlet UITextField *putObjectTextField;
 @property (weak, nonatomic) IBOutlet UITextField *multipartObjectTextField;

@@ -26,12 +26,15 @@
 
 @end
 
-@implementation S3TransferManagerUploadViewController
+@implementation S3TransferManagerUploadViewController {
+    NSString *uploadFilename;
+    bool isUploadFromLibrary;
+    NSString *recordedVideoPath;
+}
 
 // Upload filename
 
-NSString *uploadFilename;
-bool isVideo;
+
 
 - (void)viewDidLoad
 {
@@ -82,17 +85,17 @@ bool isVideo;
 #pragma mark - Transfer Manager actions
 
 - (IBAction)uploadSmallFile:(id)sender {
-    isVideo = false;
-    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-    picker.delegate = self;
-    picker.allowsEditing = YES;
-    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    
-    [self presentViewController:picker animated:YES completion:NULL];
+//    isVideo = false;
+//    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
+//    picker.delegate = self;
+//    picker.allowsEditing = YES;
+//    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+//    
+//    [self presentViewController:picker animated:YES completion:NULL];
 }
 
 - (IBAction)uploadBigFile:(id)sender {
-    isVideo = true;
+    isUploadFromLibrary = true;
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
     picker.allowsEditing = YES;
@@ -105,29 +108,41 @@ bool isVideo;
 #pragma mark - Image Picker Controller delegate methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    if (!isVideo) {
-        UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
-        NSData* imageData = UIImagePNGRepresentation(chosenImage);
-
-        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        NSString *cachesDirectory = [paths objectAtIndex:0];
-        
-        NSString* filePath = [NSString stringWithFormat:@"%@/imageTemp.png",cachesDirectory];
-        [imageData writeToFile:filePath atomically:YES];
-        self.pathForSmallFile = filePath;
-        
-        // Format date to string
-        NSDate *date = [NSDate date];
-        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-        [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-        NSString *stringFromDate = [dateFormat stringFromDate:date];
-        
-        uploadFilename = [NSString stringWithFormat:@"%@.jpg", stringFromDate];
-        
-        [picker dismissViewControllerAnimated:YES completion:NULL];
-        
-        if(self.uploadSmallFileOperation == nil || (self.uploadSmallFileOperation.isFinished && !self.uploadSmallFileOperation.isPaused)){
-            self.uploadSmallFileOperation = [self.tm uploadFile:self.pathForSmallFile bucket: [Constants transferManagerBucket] key: uploadFilename];
+    if (!isUploadFromLibrary) {
+//        UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
+//        NSData* imageData = UIImagePNGRepresentation(chosenImage);
+//
+//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+//        NSString *cachesDirectory = [paths objectAtIndex:0];
+//        
+//        NSString* filePath = [NSString stringWithFormat:@"%@/imageTemp.png",cachesDirectory];
+//        [imageData writeToFile:filePath atomically:YES];
+//        self.pathForSmallFile = filePath;
+//        
+//        // Format date to string
+//        NSDate *date = [NSDate date];
+//        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+//        [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+//        NSString *stringFromDate = [dateFormat stringFromDate:date];
+//        
+//        uploadFilename = [NSString stringWithFormat:@"%@.jpg", stringFromDate];
+//        
+//        [picker dismissViewControllerAnimated:YES completion:NULL];
+//        
+//        if(self.uploadSmallFileOperation == nil || (self.uploadSmallFileOperation.isFinished && !self.uploadSmallFileOperation.isPaused)){
+//            self.uploadSmallFileOperation = [self.tm uploadFile:self.pathForSmallFile bucket: [Constants transferManagerBucket] key: uploadFilename];
+//        }
+        NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
+        [self dismissModalViewControllerAnimated:NO];
+        // Handle a movie capture
+        if (CFStringCompare ((__bridge_retained CFStringRef) mediaType, kUTTypeMovie, 0) == kCFCompareEqualTo) {
+            NSString *moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] path];
+            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath)) {
+                UISaveVideoAtPathToSavedPhotosAlbum(moviePath, self,
+                                                    @selector(video:didFinishSavingWithError:contextInfo:), nil);
+            }
+            recordedVideoPath = moviePath;
+            // NSLog(moviePath);
         }
     } else {
         NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
@@ -143,8 +158,8 @@ bool isVideo;
             self.pathForBigFile = filePath;
 
             
-            //self.pathForBigFile = [urlVideo absoluteString];
-            NSLog(self.pathForBigFile);
+            
+            // NSLog(self.pathForBigFile);
             
             // Format date to string
             NSDate *date = [NSDate date];
@@ -267,4 +282,70 @@ bool isVideo;
     return filePath;
 }
 
+- (IBAction)record:(id)sender {
+    [self startCameraControllerFromViewController:self usingDelegate:self];
+}
+
+- (BOOL)startCameraControllerFromViewController:(UIViewController *)controller usingDelegate:(id)delegate {
+    // Validations
+    if (([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera] == NO)
+        || (delegate == nil)
+        || (controller == nil)) {
+        return NO;
+    }
+    
+    // Get imagePicker
+    UIImagePickerController *cameraUI = [[UIImagePickerController alloc] init];
+    cameraUI.sourceType = UIImagePickerControllerSourceTypeCamera;
+    
+    // Display a controller that allows user to choose movie capture
+    cameraUI.mediaTypes = [[NSArray alloc] initWithObjects:(NSString *) kUTTypeMovie, nil];
+    
+    // Hides the controls for moving & scaling pictures, or for trimming movies. To instead show the controls, use YES.
+    cameraUI.allowsEditing = NO;
+    cameraUI.delegate = delegate;
+    
+    // Display image picker
+    [controller presentModalViewController:cameraUI animated:YES];
+    return YES;
+}
+
+-(void)video:(NSString*)videoPath didFinishSavingWithError:(NSError*)error contextInfo:(void*)contextInfo {
+    if (error) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Video Saving Failed"
+                                                       delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil];
+        [alert show];
+    } else {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Video Saved"
+                                                        message:@"Saved To Photo Album! Upload to Server?"
+                                                       delegate:self
+                                              cancelButtonTitle:@"NO"
+                                              otherButtonTitles:@"YES", nil];
+        [alert show];
+    }
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex {
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    if ([title isEqualToString:@"YES"]) {
+        NSLog(@"Wait to upload to server!");
+        
+        self.pathForBigFile = recordedVideoPath;
+        // Format date to string
+        
+        NSDate *date = [NSDate date];
+        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+        [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
+        NSString *stringFromDate = [dateFormat stringFromDate:date];
+        
+        uploadFilename = [NSString stringWithFormat:@"%@.mov", stringFromDate];
+        
+        if(self.uploadBigFileOperation == nil || (self.uploadBigFileOperation.isFinished && !self.uploadBigFileOperation.isPaused)){
+            self.uploadBigFileOperation = [self.tm uploadFile:self.pathForBigFile bucket: [Constants transferManagerBucket] key: uploadFilename];
+        }
+    }
+}
+
 @end
+
+
