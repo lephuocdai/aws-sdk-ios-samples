@@ -51,3 +51,8 @@ profile
 DerivedData
 .idea/
 *.hmap
+
+# AWS access #
+####################
+S3_S3TransferManager/S3TransferManager/Constants.h
+

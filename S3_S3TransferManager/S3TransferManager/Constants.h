@@ -23,8 +23,8 @@
 // to devices securely.
 // http://aws.amazon.com/articles/Mobile/4611615499399490
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#define ACCESS_KEY_ID          @"AKIAJZSQLOXCEEVDOEPA"
-#define SECRET_KEY             @"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"
+#define ACCESS_KEY_ID          @"AKIAIKPVTVIJ2EJWTMQQ"
+#define SECRET_KEY             @"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"
 
 
 // Constants for the Bucket

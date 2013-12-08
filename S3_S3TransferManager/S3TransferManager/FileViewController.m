@@ -23,7 +23,6 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
-        fileLabel.text = fileName;
     }
     return self;
 }
@@ -32,6 +31,7 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+    fileLabel.text = fileName;
 }
 
 - (void)didReceiveMemoryWarning
@@ -44,7 +44,7 @@
     self.movieController = [[MPMoviePlayerController alloc] init];
     
     [self.movieController setContentURL:self.movieURL];
-    [self.movieController.view setFrame:CGRectMake(0, 40, 320, 470)];
+    [self.movieController.view setFrame:CGRectMake(0, 105, 320, 414)];
     [self.view addSubview:self.movieController.view];
     
     // Using the Movie Player Notifications
