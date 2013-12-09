@@ -29,6 +29,7 @@
 		F0718AB918544D38009014A0 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0718AB818544D38009014A0 /* AVFoundation.framework */; };
 		F0718ABB18544D41009014A0 /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0718ABA18544D41009014A0 /* CoreMedia.framework */; };
 		F0718ABD18544D53009014A0 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0718ABC18544D53009014A0 /* QuartzCore.framework */; };
+		F0718ABF18557D8C009014A0 /* icon.png in Resources */ = {isa = PBXBuildFile; fileRef = F0718ABE18557D8C009014A0 /* icon.png */; };
 		F0C77BCA18499C61003B60FA /* AWSRuntime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC818499C61003B60FA /* AWSRuntime.framework */; };
 		F0C77BCB18499C61003B60FA /* AWSS3.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BC918499C61003B60FA /* AWSS3.framework */; };
 		F0C77BCE1849BA40003B60FA /* AssetsLibrary.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */; };
@@ -66,9 +67,9 @@
 		F0718AB818544D38009014A0 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		F0718ABA18544D41009014A0 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
 		F0718ABC18544D53009014A0 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		F0718ABE18557D8C009014A0 /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		F0C77BC818499C61003B60FA /* AWSRuntime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSRuntime.framework; sourceTree = "<group>"; };
 		F0C77BC918499C61003B60FA /* AWSS3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = AWSS3.framework; sourceTree = "<group>"; };
-		F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Question7-opinionAboutEducation_inEnglish.mp4"; sourceTree = "<group>"; };
 		F0C77BCD1849BA40003B60FA /* AssetsLibrary.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AssetsLibrary.framework; path = System/Library/Frameworks/AssetsLibrary.framework; sourceTree = SDKROOT; };
 		F0C77BCF1849CF78003B60FA /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -148,6 +149,7 @@
 		4AD20C1117AC22E80073DC55 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				F0718ABE18557D8C009014A0 /* icon.png */,
 				4AD20C1217AC22E80073DC55 /* S3TransferManager-Info.plist */,
 				4AD20C1317AC22E80073DC55 /* InfoPlist.strings */,
 				4AD20C1617AC22E80073DC55 /* main.m */,
@@ -175,7 +177,6 @@
 		F0718AB518542AAF009014A0 /* Upload */ = {
 			isa = PBXGroup;
 			children = (
-				F0C77BCC1849B1B3003B60FA /* Question7-opinionAboutEducation_inEnglish.mp4 */,
 				4AD20C2517AC22E80073DC55 /* S3TransferManagerUploadViewController.h */,
 				4AD20C2617AC22E80073DC55 /* S3TransferManagerUploadViewController.m */,
 				4AD20C2817AC22E80073DC55 /* first.png */,
@@ -242,6 +243,7 @@
 				4AD20C2117AC22E80073DC55 /* Default-568h@2x.png in Resources */,
 				4AD20C2417AC22E80073DC55 /* MainStoryboard.storyboard in Resources */,
 				4AD20C2917AC22E80073DC55 /* first.png in Resources */,
+				F0718ABF18557D8C009014A0 /* icon.png in Resources */,
 				4AD20C2B17AC22E80073DC55 /* first@2x.png in Resources */,
 				4AD20C3017AC22E80073DC55 /* second.png in Resources */,
 				4AD20C3217AC22E80073DC55 /* second@2x.png in Resources */,

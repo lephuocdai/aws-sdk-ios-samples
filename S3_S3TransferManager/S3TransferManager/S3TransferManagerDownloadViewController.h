@@ -23,13 +23,4 @@
 @interface S3TransferManagerDownloadViewController : UIViewController <UINavigationControllerDelegate, AmazonServiceRequestDelegate, UITableViewDelegate, UITableViewDataSource>
 @property (strong, nonatomic) IBOutlet UITableView *tableView;
 
-//@property (nonatomic, strong) S3TransferManager *tm;
-//@property (weak, nonatomic) IBOutlet UITextField *getObjectTextField;
-//@property (strong, nonatomic) IBOutlet UILabel *fileName;
-
-//- (IBAction)downloadFile:(id)sender;
-//- (IBAction)pauseDownload:(id)sender;
-//- (IBAction)resumeDownload:(id)sender;
-//- (IBAction)cancelDownload:(id)sender;
-
 @end

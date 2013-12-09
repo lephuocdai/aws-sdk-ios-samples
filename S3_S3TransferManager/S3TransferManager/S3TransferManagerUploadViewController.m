@@ -18,11 +18,12 @@
 
 @interface S3TransferManagerUploadViewController ()
 
-@property (nonatomic, strong) S3TransferOperation *uploadSmallFileOperation;
-@property (nonatomic, strong) S3TransferOperation *uploadBigFileOperation;
+@property (nonatomic, strong) S3TransferOperation *uploadDidRecord;
+@property (nonatomic, strong) S3TransferOperation *uploadFromLibary;
 
-@property (nonatomic, strong) NSString *pathForSmallFile;
-@property (nonatomic, strong) NSString *pathForBigFile;
+// @property (nonatomic, strong) NSString *pathForSmallFile;
+
+@property (nonatomic, strong) NSString *pathForFileFromLibary;
 
 @end
 
@@ -32,10 +33,6 @@
     NSString *recordedVideoPath;
 }
 
-// Upload filename
-
-
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -44,8 +41,7 @@
         if(![ACCESS_KEY_ID isEqualToString:@"CHANGE ME"]){
             
             // Initialize the S3 Client.
-            AmazonS3Client *s3 = [[AmazonS3Client alloc] initWithAccessKey:ACCESS_KEY_ID
-                                                             withSecretKey:SECRET_KEY];
+            AmazonS3Client *s3 = [[AmazonS3Client alloc] initWithAccessKey:ACCESS_KEY_ID withSecretKey:SECRET_KEY];
             s3.endpoint = [AmazonEndpoints s3Endpoint:US_WEST_2];
             
             // Initialize the S3TransferManager
@@ -57,19 +53,14 @@
             S3CreateBucketRequest *createBucketRequest = [[S3CreateBucketRequest alloc] initWithName:[Constants transferManagerBucket] andRegion: [S3Region USWest2]];
             @try {
                 S3CreateBucketResponse *createBucketResponse = [s3 createBucket:createBucketRequest];
-                if(createBucketResponse.error != nil)
-                {
+                if(createBucketResponse.error != nil) {
                     NSLog(@"Error: %@", createBucketResponse.error);
                 }
-            }@catch(AmazonServiceException *exception){
-                if(![@"BucketAlreadyOwnedByYou" isEqualToString: exception.errorCode]){
+            }@catch(AmazonServiceException *exception) {
+                if(![@"BucketAlreadyOwnedByYou" isEqualToString: exception.errorCode]) {
                     NSLog(@"Unable to create bucket: %@ %@",exception.errorCode, exception.error);
                 }
             }
-            
-            // Set the paths for the small and big files
-//            self.pathForSmallFile = [self generateTempFile: @"small_test_data.txt": kSmallFileSize];
-//            self.pathForBigFile = [self generateTempFile: @"big_test_data.txt" : kBigFileSize];
             
         }else {
             UIAlertView *message = [[UIAlertView alloc] initWithTitle:CREDENTIALS_ERROR_TITLE
@@ -84,67 +75,25 @@
 
 #pragma mark - Transfer Manager actions
 
-- (IBAction)uploadSmallFile:(id)sender {
-//    isVideo = false;
-//    UIImagePickerController *picker = [[UIImagePickerController alloc] init];
-//    picker.delegate = self;
-//    picker.allowsEditing = YES;
-//    picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-//    
-//    [self presentViewController:picker animated:YES completion:NULL];
-}
-
-- (IBAction)uploadBigFile:(id)sender {
+- (IBAction)upload:(id)sender {
     isUploadFromLibrary = true;
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.delegate = self;
     picker.allowsEditing = YES;
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
     picker.mediaTypes = [NSArray arrayWithObject:(NSString *)kUTTypeMovie];
-
+    
     [self presentViewController:picker animated:YES completion:NULL];
+}
+
+- (IBAction)record:(id)sender {
+    [self startCameraControllerFromViewController:self usingDelegate:self];
 }
 
 #pragma mark - Image Picker Controller delegate methods
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
-    if (!isUploadFromLibrary) {
-//        UIImage *chosenImage = info[UIImagePickerControllerEditedImage];
-//        NSData* imageData = UIImagePNGRepresentation(chosenImage);
-//
-//        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-//        NSString *cachesDirectory = [paths objectAtIndex:0];
-//        
-//        NSString* filePath = [NSString stringWithFormat:@"%@/imageTemp.png",cachesDirectory];
-//        [imageData writeToFile:filePath atomically:YES];
-//        self.pathForSmallFile = filePath;
-//        
-//        // Format date to string
-//        NSDate *date = [NSDate date];
-//        NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-//        [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss"];
-//        NSString *stringFromDate = [dateFormat stringFromDate:date];
-//        
-//        uploadFilename = [NSString stringWithFormat:@"%@.jpg", stringFromDate];
-//        
-//        [picker dismissViewControllerAnimated:YES completion:NULL];
-//        
-//        if(self.uploadSmallFileOperation == nil || (self.uploadSmallFileOperation.isFinished && !self.uploadSmallFileOperation.isPaused)){
-//            self.uploadSmallFileOperation = [self.tm uploadFile:self.pathForSmallFile bucket: [Constants transferManagerBucket] key: uploadFilename];
-//        }
-        NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
-        [self dismissModalViewControllerAnimated:NO];
-        // Handle a movie capture
-        if (CFStringCompare ((__bridge_retained CFStringRef) mediaType, kUTTypeMovie, 0) == kCFCompareEqualTo) {
-            NSString *moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] path];
-            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath)) {
-                UISaveVideoAtPathToSavedPhotosAlbum(moviePath, self,
-                                                    @selector(video:didFinishSavingWithError:contextInfo:), nil);
-            }
-            recordedVideoPath = moviePath;
-            // NSLog(moviePath);
-        }
-    } else {
+    if (isUploadFromLibrary) {
         NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
         if ([mediaType isEqualToString:(NSString *)kUTTypeMovie]) {
             NSURL *urlVideo = [info objectForKey:UIImagePickerControllerMediaURL];
@@ -155,11 +104,7 @@
             NSString* filePath = [NSString stringWithFormat:@"%@/imageTemp.mov",cachesDirectory];
             NSData *videoData = [NSData dataWithContentsOfURL:urlVideo];
             [videoData writeToFile:filePath atomically:YES];
-            self.pathForBigFile = filePath;
-
-            
-            
-            // NSLog(self.pathForBigFile);
+            self.pathForFileFromLibary = filePath;
             
             // Format date to string
             NSDate *date = [NSDate date];
@@ -170,9 +115,22 @@
             uploadFilename = [NSString stringWithFormat:@"%@.mov", stringFromDate];
             [picker dismissViewControllerAnimated:YES completion:NULL];
             
-            if(self.uploadBigFileOperation == nil || (self.uploadBigFileOperation.isFinished && !self.uploadBigFileOperation.isPaused)){
-                self.uploadBigFileOperation = [self.tm uploadFile:self.pathForBigFile bucket: [Constants transferManagerBucket] key: uploadFilename];
+            if(self.uploadFromLibary == nil || (self.uploadFromLibary.isFinished && !self.uploadFromLibary.isPaused)){
+                self.uploadFromLibary = [self.tm uploadFile:self.pathForFileFromLibary bucket: [Constants transferManagerBucket] key: uploadFilename];
             }
+        }
+    } else {
+        NSString *mediaType = [info objectForKey:UIImagePickerControllerMediaType];
+        [self dismissViewControllerAnimated:NO completion:nil];
+        // Handle a movie capture
+        if (CFStringCompare ((__bridge_retained CFStringRef) mediaType, kUTTypeMovie, 0) == kCFCompareEqualTo) {
+            NSString *moviePath = [[info objectForKey:UIImagePickerControllerMediaURL] path];
+            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(moviePath)) {
+                UISaveVideoAtPathToSavedPhotosAlbum(moviePath, self,
+                                                    @selector(video:didFinishSavingWithError:contextInfo:), nil);
+            }
+            recordedVideoPath = moviePath;
+            // NSLog(moviePath);
         }
     }
     
@@ -196,42 +154,40 @@
     // is no longer valid.  Obtain the new handles
     for (S3TransferOperation *op in ops) {
         if ([op.putRequest.key isEqualToString:kKeyForBigFile]) {
-            self.uploadBigFileOperation = op;
+            self.uploadFromLibary = op;
         }else if ([op.putRequest.key isEqualToString:uploadFilename]) {
-            self.uploadSmallFileOperation = op;
+            self.uploadDidRecord = op;
         }
     }
 }
 
 - (IBAction)cancelSmallUpload:(id)sender {
-    [self.uploadSmallFileOperation cancel];
-    self.uploadSmallFileOperation = nil;
+    [self.uploadDidRecord cancel];
+    self.uploadDidRecord = nil;
     self.putObjectTextField.text = @"";
 }
 
 - (IBAction)cancelBigUpload:(id)sender {
-    [self.uploadBigFileOperation cancel];
-    self.uploadBigFileOperation = nil;
+    [self.uploadFromLibary cancel];
+    self.uploadFromLibary = nil;
     self.multipartObjectTextField.text = @"";
 }
 
 - (IBAction)cancelAllTransfers:(id)sender {
     [self.tm cancelAllTransfers];
-    self.uploadBigFileOperation = nil;
-    self.uploadSmallFileOperation = nil;
+    self.uploadFromLibary = nil;
+    self.uploadDidRecord = nil;
     self.multipartObjectTextField.text = @"";
     self.putObjectTextField.text = @"";
 }
 
 #pragma mark - AmazonServiceRequestDelegate
 
--(void)request:(AmazonServiceRequest *)request didReceiveResponse:(NSURLResponse *)response
-{
+-(void)request:(AmazonServiceRequest *)request didReceiveResponse:(NSURLResponse *)response {
     NSLog(@"didReceiveResponse called: %@", response);
 }
 
--(void)request:(AmazonServiceRequest *)request didSendData:(long long) bytesWritten totalBytesWritten:(long long)totalBytesWritten totalBytesExpectedToWrite:(long long)totalBytesExpectedToWrite
-{
+-(void)request:(AmazonServiceRequest *)request didSendData:(long long) bytesWritten totalBytesWritten:(long long)totalBytesWritten totalBytesExpectedToWrite:(long long)totalBytesExpectedToWrite {
     if([((S3PutObjectRequest *)request).key isEqualToString:uploadFilename]){
         double percent = ((double)totalBytesWritten/(double)totalBytesExpectedToWrite)*100;
         self.putObjectTextField.text = [NSString stringWithFormat:@"%.2f%%", percent];
@@ -242,8 +198,7 @@
     }
 }
 
--(void)request:(AmazonServiceRequest *)request didCompleteWithResponse:(AmazonServiceResponse *)response
-{
+-(void)request:(AmazonServiceRequest *)request didCompleteWithResponse:(AmazonServiceResponse *)response {
     if([((S3PutObjectRequest *)request).key isEqualToString:uploadFilename]){
         self.putObjectTextField.text = @"Done";
     }
@@ -252,13 +207,11 @@
     }
 }
 
--(void)request:(AmazonServiceRequest *)request didFailWithError:(NSError *)error
-{
+-(void)request:(AmazonServiceRequest *)request didFailWithError:(NSError *)error {
     NSLog(@"didFailWithError called: %@", error);
 }
 
--(void)request:(AmazonServiceRequest *)request didFailWithServiceException:(NSException *)exception
-{
+-(void)request:(AmazonServiceRequest *)request didFailWithServiceException:(NSException *)exception {
     NSLog(@"didFailWithServiceException called: %@", exception);
 }
 
@@ -282,9 +235,7 @@
     return filePath;
 }
 
-- (IBAction)record:(id)sender {
-    [self startCameraControllerFromViewController:self usingDelegate:self];
-}
+
 
 - (BOOL)startCameraControllerFromViewController:(UIViewController *)controller usingDelegate:(id)delegate {
     // Validations
@@ -306,7 +257,7 @@
     cameraUI.delegate = delegate;
     
     // Display image picker
-    [controller presentModalViewController:cameraUI animated:YES];
+    [controller presentViewController:cameraUI animated:YES completion:nil];
     return YES;
 }
 
@@ -330,7 +281,7 @@
     if ([title isEqualToString:@"YES"]) {
         NSLog(@"Wait to upload to server!");
         
-        self.pathForBigFile = recordedVideoPath;
+        self.pathForFileFromLibary = recordedVideoPath;
         // Format date to string
         
         NSDate *date = [NSDate date];
@@ -340,8 +291,8 @@
         
         uploadFilename = [NSString stringWithFormat:@"%@.mov", stringFromDate];
         
-        if(self.uploadBigFileOperation == nil || (self.uploadBigFileOperation.isFinished && !self.uploadBigFileOperation.isPaused)){
-            self.uploadBigFileOperation = [self.tm uploadFile:self.pathForBigFile bucket: [Constants transferManagerBucket] key: uploadFilename];
+        if(self.uploadFromLibary == nil || (self.uploadFromLibary.isFinished && !self.uploadFromLibary.isPaused)){
+            self.uploadFromLibary = [self.tm uploadFile:self.pathForFileFromLibary bucket: [Constants transferManagerBucket] key: uploadFilename];
         }
     }
 }

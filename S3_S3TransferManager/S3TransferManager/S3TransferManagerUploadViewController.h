@@ -25,16 +25,13 @@
 
 @property (nonatomic, strong) S3TransferManager *tm;
 
-- (IBAction)uploadSmallFile:(id)sender;
-- (IBAction)uploadBigFile:(id)sender;
-- (IBAction)pauseUploads:(id)sender;
-- (IBAction)resumeUploads:(id)sender;
-- (IBAction)cancelSmallUpload:(id)sender;
-- (IBAction)cancelBigUpload:(id)sender;
-- (IBAction)cancelAllTransfers:(id)sender;
+
+- (IBAction)upload:(id)sender;
+- (IBAction)record:(id)sender;
+
 - (NSString *)generateTempFile: (NSString *)filename : (long long)approximateFileSize;
 
-- (IBAction)record:(id)sender;
+
 - (BOOL)startCameraControllerFromViewController:(UIViewController *)controller usingDelegate:(id)delegate;
 - (void)video:(NSString *)videoPath didFinishSavingWithError:(NSError *)error contextInfo:(void *)contextInfo;
 
